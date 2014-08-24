@@ -21,7 +21,8 @@ makeCacheMatrix <- function(x = matrix()) {
       inv <<- NULL
     }
     get <- function() xval
-    setinv <- function(xval) inv <<- solve(xval)
+    ## setinv <- function(xval) inv <<- solve(xval)
+    setinv <- function() inv <<- solve(get())
     getinv <- function() inv
     list(set = set, get = get,
          setinv = setinv,
@@ -29,7 +30,12 @@ makeCacheMatrix <- function(x = matrix()) {
   }
 
 ## cacheSolve returns cached inverse of input matrix, or calculates one if none exists
-## Usage: cacheSolve(myfun)
+## Usage: 
+## myfun$set(input_matrix)  ## This loads the input matrix in the cache
+## cacheSolve(myfun)  ##  . .  and repeat this call to demo cache retrieval
+## To demo function notices change of input, repeat myfun$set with a DIFFERENT input matrix
+##     and cacheSOlve will invert the new input, report on the newly computed inverse,
+###    and update the inverted matrix cache to service the next call. 
 
 cacheSolve <- function(x, ...) {
   
@@ -40,6 +46,7 @@ cacheSolve <- function(x, ...) {
   }
   data <- x$get()  ## NOTE: Throws error if x$set() has not been previously run
   inv <- solve(data, ...)
-  x$setinv(inv)
+  ## x$setinv(inv)
+  x$setinv()
   inv
 }
